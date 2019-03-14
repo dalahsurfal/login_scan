@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "724313870832",
+    "firebase_url": "https://login-demo-f5100.firebaseio.com",
+    "project_id": "login-demo-f5100",
+    "storage_bucket": "login-demo-f5100.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:724313870832:android:f26cd367efcd301a",
+        "android_client_info": {
+          "package_name": "com.rox.loginscan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "724313870832-le0br93dp6eq83a47a5ohnu2kmr2g7mh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxxpJvDn0a7FLdZU7L1dZc0GN-4PUfuxA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
