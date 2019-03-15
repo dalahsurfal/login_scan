@@ -25,7 +25,6 @@ class Dependencies {
 
 class TimerPage extends StatefulWidget {
   TimerPage({Key key}) : super(key: key);
-
   TimerPageState createState() => new TimerPageState();
 }
 
