@@ -21,6 +21,8 @@ class Dependencies {
   final TextStyle textStyle = const TextStyle(fontSize: 90.0, fontFamily: "Bebas Neue");
   final Stopwatch stopwatch = new Stopwatch();
   final int timerMillisecondsRefreshRate = 30;
+  final List<String> savedTimeList = List<String>();
+  var date = new DateTime.now();
 }
 
 class TimerPage extends StatefulWidget {
@@ -35,6 +37,7 @@ class TimerPageState extends State<TimerPage>{
     setState(() {
       if (dependencies.stopwatch.isRunning) {
         print("${dependencies.stopwatch.elapsed}");
+        dependencies.savedTimeList.insert(0, "${dependencies.stopwatch.elapsed}");
         dependencies.stopwatch.stop();
       } else {
         dependencies.stopwatch.reset();
@@ -80,10 +83,38 @@ class TimerPageState extends State<TimerPage>{
             ),
           ),
         ),
+        new Expanded(
+            child: ListView.builder(
+                itemCount: dependencies.savedTimeList.length,
+                itemBuilder: (context, index){
+                  return ListTile(
+                    title: Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        createListItemText(
+                            dependencies.savedTimeList.length,
+                            index,
+                            dependencies.savedTimeList.elementAt(index)),
+                          style: TextStyle(fontSize: 24.0),
+                      ),
+                    ),
+                  );
+                }
+            ),
+        ),
       ],
     );
   }
+
+
+  String createListItemText(int listSize, int index, String time) {
+    index = listSize - index;
+    var today = dependencies.date.toString().substring(0,10);
+    return 'Time $today - ${time.substring(0,7)}';
+  }
 }
+
+
 
 class TimerText extends StatefulWidget {
   TimerText({this.dependencies});
