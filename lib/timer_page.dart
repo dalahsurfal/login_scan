@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:login_scan/models/workedHours.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class ElapsedTime {
   final int hundreds;
@@ -7,38 +10,42 @@ class ElapsedTime {
   final int minutes;
   final int hours;
 
-  ElapsedTime({
-    this.hundreds,
-    this.seconds,
-    this.minutes,
-    this.hours
-  });
+  ElapsedTime({this.hundreds, this.seconds, this.minutes, this.hours});
 }
 
 class Dependencies {
-
-  final List<ValueChanged<ElapsedTime>> timerListeners = <ValueChanged<ElapsedTime>>[];
-  final TextStyle textStyle = const TextStyle(fontSize: 90.0, fontFamily: "Bebas Neue");
+  final List<ValueChanged<ElapsedTime>> timerListeners =
+      <ValueChanged<ElapsedTime>>[];
+  final TextStyle textStyle =
+      const TextStyle(fontSize: 90.0, fontFamily: "Bebas Neue");
   final Stopwatch stopwatch = new Stopwatch();
   final int timerMillisecondsRefreshRate = 30;
   final List<String> savedTimeList = List<String>();
-  var date = new DateTime.now();
+  var today = DateTime.now().toString().substring(0, 10);
+  final savedTimeReference = FirebaseDatabase.instance.reference();
 }
 
 class TimerPage extends StatefulWidget {
   TimerPage({Key key}) : super(key: key);
+
   TimerPageState createState() => new TimerPageState();
 }
 
-class TimerPageState extends State<TimerPage>{
+class TimerPageState extends State<TimerPage> {
   final Dependencies dependencies = new Dependencies();
+  final WorkedHours workedHours = new WorkedHours('', '', '');
 
   void leftButtonPressed() {
     setState(() {
       if (dependencies.stopwatch.isRunning) {
         print("${dependencies.stopwatch.elapsed}");
-        dependencies.savedTimeList.insert(0, "${dependencies.stopwatch.elapsed}");
+        dependencies.savedTimeList
+            .insert(0, "${dependencies.stopwatch.elapsed}");
         dependencies.stopwatch.stop();
+        dependencies.savedTimeReference.child(workedHours.id).set({
+          'title': "${dependencies.stopwatch.elapsed}",
+          'description': dependencies.today
+        });
       } else {
         dependencies.stopwatch.reset();
       }
@@ -56,10 +63,10 @@ class TimerPageState extends State<TimerPage>{
   }
 
   Widget buildFloatingButton(String text, VoidCallback callback) {
-    TextStyle roundTextStyle = const TextStyle(fontSize: 16.0, color: Colors.white);
+    TextStyle roundTextStyle =
+        const TextStyle(fontSize: 16.0, color: Colors.white);
     return new FloatingActionButton(
-        child: new Text(text, style: roundTextStyle),
-        onPressed: callback);
+        child: new Text(text, style: roundTextStyle), onPressed: callback);
   }
 
   @override
@@ -77,61 +84,63 @@ class TimerPageState extends State<TimerPage>{
             child: new Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                buildFloatingButton(dependencies.stopwatch.isRunning ? "lap" : "reset", leftButtonPressed),
-                buildFloatingButton(dependencies.stopwatch.isRunning ? "stop" : "start", rightButtonPressed),
+                buildFloatingButton(
+                    dependencies.stopwatch.isRunning ? "lap" : "reset",
+                    leftButtonPressed),
+                buildFloatingButton(
+                    dependencies.stopwatch.isRunning ? "stop" : "start",
+                    rightButtonPressed),
               ],
             ),
           ),
         ),
         new Expanded(
-            child: ListView.builder(
-                itemCount: dependencies.savedTimeList.length,
-                itemBuilder: (context, index){
-                  return ListTile(
-                    title: Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        createListItemText(
-                            dependencies.savedTimeList.length,
-                            index,
-                            dependencies.savedTimeList.elementAt(index)),
-                          style: TextStyle(fontSize: 24.0),
-                      ),
+          child: ListView.builder(
+              itemCount: dependencies.savedTimeList.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      createListItemText(dependencies.savedTimeList.length,
+                          index, dependencies.savedTimeList.elementAt(index)),
+                      style: TextStyle(fontSize: 24.0),
                     ),
-                  );
-                }
-            ),
+                  ),
+                );
+              }),
         ),
       ],
     );
   }
 
-
   String createListItemText(int listSize, int index, String time) {
     index = listSize - index;
-    var today = dependencies.date.toString().substring(0,10);
-    return 'Time $today - ${time.substring(0,7)}';
+    return 'Time ${dependencies.today} - ${time.substring(0, 7)}';
   }
 }
 
-
-
 class TimerText extends StatefulWidget {
   TimerText({this.dependencies});
+
   final Dependencies dependencies;
 
-  TimerTextState createState() => new TimerTextState(dependencies: dependencies);
+  TimerTextState createState() =>
+      new TimerTextState(dependencies: dependencies);
 }
 
 class TimerTextState extends State<TimerText> {
   TimerTextState({this.dependencies});
+
   final Dependencies dependencies;
   Timer timer;
   int milliseconds;
 
   @override
   void initState() {
-    timer = new Timer.periodic(new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate), callback);
+    timer = new Timer.periodic(
+        new Duration(milliseconds: dependencies.timerMillisecondsRefreshRate),
+        callback);
     super.initState();
   }
 
@@ -185,13 +194,16 @@ class TimerTextState extends State<TimerText> {
 
 class MinutesSecondsHours extends StatefulWidget {
   MinutesSecondsHours({this.dependencies});
+
   final Dependencies dependencies;
 
-  MinutesSecondsHoursState createState() => new MinutesSecondsHoursState(dependencies: dependencies);
+  MinutesSecondsHoursState createState() =>
+      new MinutesSecondsHoursState(dependencies: dependencies);
 }
 
 class MinutesSecondsHoursState extends State<MinutesSecondsHours> {
   MinutesSecondsHoursState({this.dependencies});
+
   final Dependencies dependencies;
 
   int minutes = 0;
@@ -205,7 +217,9 @@ class MinutesSecondsHoursState extends State<MinutesSecondsHours> {
   }
 
   void onTick(ElapsedTime elapsed) {
-    if (elapsed.minutes != minutes || elapsed.seconds != seconds || elapsed.hours != hours) {
+    if (elapsed.minutes != minutes ||
+        elapsed.seconds != seconds ||
+        elapsed.hours != hours) {
       setState(() {
         minutes = elapsed.minutes;
         seconds = elapsed.seconds;
@@ -219,41 +233,7 @@ class MinutesSecondsHoursState extends State<MinutesSecondsHours> {
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
     String hoursStr = (hours % 60).toString().padLeft(2, '0');
-    return new Text('$hoursStr:$minutesStr:$secondsStr', style: dependencies.textStyle);
+    return new Text('$hoursStr:$minutesStr:$secondsStr',
+        style: dependencies.textStyle);
   }
 }
-
-//class Hundreds extends StatefulWidget {
-//  Hundreds({this.dependencies});
-//  final Dependencies dependencies;
-//
-//  HundredsState createState() => new HundredsState(dependencies: dependencies);
-//}
-
-//class HundredsState extends State<Hundreds> {
-//  HundredsState({this.dependencies});
-//  final Dependencies dependencies;
-//
-//  int hundreds = 0;
-//
-//  @override
-//  void initState() {
-//    dependencies.timerListeners.add(onTick);
-//    super.initState();
-//  }
-//
-//  void onTick(ElapsedTime elapsed) {
-//    if (elapsed.hundreds != hundreds) {
-//      setState(() {
-//        hundreds = elapsed.hundreds;
-//      });
-//    }
-//  }
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    String hundredsStr = (hundreds % 100).toString().padLeft(2, '0');
-//    return new Text(hundredsStr, style: dependencies.textStyle);
-//  }
-//
-//}
