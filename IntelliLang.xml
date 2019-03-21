@@ -1,0 +1,24 @@
+<application>
+  <component name="LanguageInjectionConfiguration">
+    <injection language="SpEL" injector-id="xml">
+      <display-name>filter-class</display-name>
+      <place><![CDATA[xmlTag().withLocalName(string().equalTo("filter-class")).withNamespace(string().equalTo("http://xmlns.jcp.org/xml/ns/javaee"))]]></place>
+    </injection>
+    <injection language="SpEL" injector-id="xml">
+      <display-name>filter-name</display-name>
+      <place><![CDATA[xmlTag().withLocalName(string().equalTo("filter-name")).withNamespace(string().equalTo("http://xmlns.jcp.org/xml/ns/javaee"))]]></place>
+    </injection>
+    <injection language="SpEL" injector-id="xml">
+      <display-name>listener-class</display-name>
+      <place><![CDATA[xmlTag().withLocalName(string().equalTo("listener-class")).withNamespace(string().equalTo("http://xmlns.jcp.org/xml/ns/javaee"))]]></place>
+    </injection>
+    <injection language="SpEL" injector-id="xml">
+      <display-name>param-value</display-name>
+      <place><![CDATA[xmlTag().withLocalName(string().equalTo("param-value")).withNamespace(string().equalTo("http://xmlns.jcp.org/xml/ns/javaee"))]]></place>
+    </injection>
+    <injection language="SpEL" injector-id="xml">
+      <display-name>servlet-class</display-name>
+      <place><![CDATA[xmlTag().withLocalName(string().equalTo("servlet-class")).withNamespace(string().equalTo("http://xmlns.jcp.org/xml/ns/javaee"))]]></place>
+    </injection>
+  </component>
+</application>
