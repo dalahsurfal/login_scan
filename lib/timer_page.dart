@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:login_scan/models/workedHours.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 class ElapsedTime {
   final int hundreds;
@@ -22,7 +21,8 @@ class Dependencies {
   final int timerMillisecondsRefreshRate = 30;
   final List<String> savedTimeList = List<String>();
   var today = DateTime.now().toString().substring(0, 10);
-  final savedTimeReference = FirebaseDatabase.instance.reference();
+  final savedTimeReference = FirebaseDatabase.instance.reference().child('savedData');
+
 }
 
 class TimerPage extends StatefulWidget {
@@ -35,6 +35,7 @@ class TimerPageState extends State<TimerPage> {
   final Dependencies dependencies = new Dependencies();
   final WorkedHours workedHours = new WorkedHours('', '', '');
 
+
   void leftButtonPressed() {
     setState(() {
       if (dependencies.stopwatch.isRunning) {
@@ -42,7 +43,7 @@ class TimerPageState extends State<TimerPage> {
         dependencies.savedTimeList
             .insert(0, "${dependencies.stopwatch.elapsed}");
         dependencies.stopwatch.stop();
-        dependencies.savedTimeReference.child(workedHours.id).set({
+        dependencies.savedTimeReference.push().set({
           'title': "${dependencies.stopwatch.elapsed}",
           'description': dependencies.today
         });
