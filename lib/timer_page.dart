@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:login_scan/models/workedHours.dart';
 import 'package:login_scan/auth_provider.dart';
 
 class ElapsedTime {
@@ -16,15 +15,16 @@ class ElapsedTime {
 class Dependencies {
   final List<ValueChanged<ElapsedTime>> timerListeners =
       <ValueChanged<ElapsedTime>>[];
+
   final TextStyle textStyle =
       const TextStyle(fontSize: 90.0, fontFamily: "Bebas Neue");
+
   final Stopwatch stopwatch = new Stopwatch();
   final int timerMillisecondsRefreshRate = 30;
   final List<String> savedTimeList = List<String>();
   var today = DateTime.now().toString().substring(0, 10);
 
   final savedTimeReference = FirebaseDatabase.instance.reference();
-
 }
 
 class TimerPage extends StatefulWidget {
@@ -35,7 +35,7 @@ class TimerPage extends StatefulWidget {
 
 class TimerPageState extends State<TimerPage> {
   final Dependencies dependencies = new Dependencies();
-  final WorkedHours workedHours = new WorkedHours('', '', '');
+//  final WorkedHours workedHours = new WorkedHours('', '', '');
 
   void leftButtonPressed() {
     setState(() {
@@ -56,6 +56,21 @@ class TimerPageState extends State<TimerPage> {
       }
     });
   }
+
+//  void findCurrentUid(){
+//    final BaseAuth auth = AuthProvider.of(context).auth.currentUserId;
+////   StreamBuilder<String>(
+////      stream: auth.onAuthStateChanged,
+////      builder: (BuildContext context, AsyncSnapshot<String> snapshot){
+////        if(snapshot.connectionState == ConnectionState.active){
+////          final bool isLoggedIn = snapshot.hasData;
+//////          final String CurrentUid = snapshot.data;
+////          return isLoggedIn ? HomePage() : LoginPage();
+////        }
+////        return _buildWaitingScreen();
+////      },
+////    );
+//  }
 
   void rightButtonPressed() {
     setState(() {

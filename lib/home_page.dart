@@ -4,20 +4,18 @@ import 'timer_page.dart';
 import 'package:login_scan/auth.dart';
 import 'package:flutter/rendering.dart';
 import 'auth_provider.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'historyDetails.dart';
 
 import 'avatar_page.dart';
-import 'package:login_scan/screens/catalog.dart';
-import 'package:login_scan/models/src/item.dart';
-import 'dart:convert';
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart' as crypto;
 
-class HomePage extends StatelessWidget {
-  HomePage({this.auth, this.currentUserId});
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-  final BaseAuth auth;
-  final String currentUserId;
-
+class _HomePageState extends State<HomePage> {
+  final savedTimeReference = FirebaseDatabase.instance.reference();
 
   Future<void> _signOut(BuildContext context) async {
     try {
@@ -28,22 +26,33 @@ class HomePage extends StatelessWidget {
     }
   }
 
+  void getData(String uid) {
+    savedTimeReference
+        .child(uid)
+        .orderByChild('description')
+        .once()
+        .then((DataSnapshot snapshot) {
+      print('Worked periods: ${snapshot.value}');
+    });
+  }
+
+  int currentTab = 0;
+  TimerPage timerPage;
+  HistoryDetails historyDetails;
+  List<Widget> pages;
+  Widget currentPage;
+
+  @override
+  void initState(){
+    timerPage = TimerPage();
+    historyDetails = HistoryDetails();
+    pages = [timerPage, historyDetails];
+    currentPage = timerPage;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-//    FirebaseUser user = await firebaseAuth.currentUser();
-//    String currentUid = auth.currentUserId;
-
-//    generates md5 hash from a String, in this case the current user id
-//    generateMd5(String data) {
-//      var content = new Utf8Encoder().convert(data);
-//      var md5 = crypto.md5;
-//      var digest = md5.convert(content);
-//      return hex.encode(digest.bytes);
-//    }
-//
-//    String hash = generateMd5(currentUid);
-//    var url = 'https://www.gravatar.com/avatar/$hash?s=200&d=identicon';
-    var url = 'https://robohash.org/$currentUserId?set=set4';
 //    var avatar = AvatarPage(url: url, size: 150.0);
 
 //    var balance = Card(
@@ -96,18 +105,14 @@ class HomePage extends StatelessWidget {
 //        )
 //      ],
 //    );
-
+    String uid = AuthProvider.of(context).auth.currentUserId;
+    var url = 'https://robohash.org/$uid?set=set4';
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
         title: Text('Welcome'),
         actions: <Widget>[
-//          AvatarPage(url: url, size: 150.0),
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            onPressed: () => Navigator.pushNamed(context, '/cart'),
-          ),
           FlatButton(
             child: Text(
               'Logout',
@@ -117,9 +122,25 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Container(
-          child: new TimerPage()
-      ),
+      body: currentPage,
+      bottomNavigationBar: BottomNavigationBar(
+          currentIndex: currentTab,
+          onTap: (int index) {
+            setState(() {
+              currentTab = index;
+              currentPage = pages[index];
+            });
+          },
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text('Home'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              title: Text('Details'),
+            )
+          ]),
     );
   }
 }
