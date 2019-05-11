@@ -6,8 +6,9 @@ import 'package:flutter/rendering.dart';
 import 'auth_provider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'historyDetails.dart';
+import 'income.dart';
 
-import 'avatar_page.dart';
+//import 'avatar_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -26,19 +27,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void getData(String uid) {
-    savedTimeReference
-        .child(uid)
-        .orderByChild('description')
-        .once()
-        .then((DataSnapshot snapshot) {
-      print('Worked periods: ${snapshot.value}');
-    });
-  }
-
   int currentTab = 0;
   TimerPage timerPage;
   HistoryDetails historyDetails;
+  IncomePage incomePage;
   List<Widget> pages;
   Widget currentPage;
 
@@ -46,7 +38,8 @@ class _HomePageState extends State<HomePage> {
   void initState(){
     timerPage = TimerPage();
     historyDetails = HistoryDetails();
-    pages = [timerPage, historyDetails];
+    incomePage = IncomePage();
+    pages = [timerPage, historyDetails, incomePage];
     currentPage = timerPage;
     super.initState();
   }
@@ -106,7 +99,7 @@ class _HomePageState extends State<HomePage> {
 //      ],
 //    );
     String uid = AuthProvider.of(context).auth.currentUserId;
-    var url = 'https://robohash.org/$uid?set=set4';
+//    var url = 'https://robohash.org/$uid?set=set4';
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
@@ -139,6 +132,10 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.list),
               title: Text('Details'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.monetization_on),
+              title: Text('Income'),
             )
           ]),
     );

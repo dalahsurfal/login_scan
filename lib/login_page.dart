@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Login demo"),
+        title: Text("Login"),
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 64),
@@ -70,7 +70,6 @@ class _LoginPageState extends State<LoginPage> {
           key: formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-//            crossAxisAlignment: CrossAxisAlignment.stretch,
             children:  buildTitle() + buildInputs() + buildSubmitButtons(),
           ),
         ),
