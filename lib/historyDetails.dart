@@ -29,7 +29,7 @@ class _HistoryDetailsState extends State<HistoryDetails> {
             style: Theme.of(context)
                 .textTheme
                 .display4
-                .copyWith(color: Colors.black, fontSize: 30)),
+                .copyWith(color: Colors.black, fontSize: 30, fontFamily: "Bebas Neue")),
       ];
     }
 
