@@ -27,11 +27,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => RootPage(),
-//          '/cart': (context) => MyCart(),
-        },
+        home: RootPage(),
       ),
     );
   }
