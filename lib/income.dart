@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'auth_provider.dart';
@@ -54,14 +56,15 @@ class _IncomePageState extends State<IncomePage> {
 
             workedMin += int.parse(min);
             workedSec += int.parse(sec);
-            if (workedSec >= 60) {
-              var addMin = workedSec / 60;
-              workedMin += addMin.toInt();
-              workedSec =
-                  int.tryParse(addMin.toString().split('.')[1].substring(0, 2));
-            }
           }
         }
+      }
+      if (workedSec >= 60) {
+        int fac = pow(10, 2); // fac=100
+        var addMin = ((workedSec / 60)*fac).round()/fac;
+        workedMin += addMin.toInt();
+        workedSec =
+            int.tryParse(addMin.toString().split('.')[1].substring(0, 1));
       }
       print('total min: $workedMin, total sec: $workedSec');
       _addToTotalHistoryWidgets(workedMin, workedSec);
@@ -81,8 +84,8 @@ class _IncomePageState extends State<IncomePage> {
     String uid = AuthProvider.of(context).auth.currentUserId;
 
     buildTotalHistory(uid);
-
-    return Scaffold(
+    bool notNull(Object o) => o != null;
+    return new Scaffold(
         resizeToAvoidBottomPadding: false,
         body: Container(
           padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 64),
@@ -90,7 +93,7 @@ class _IncomePageState extends State<IncomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 totalHistory
-              ]
+              ].where(notNull).toList(),
           ),
         ),
     );
